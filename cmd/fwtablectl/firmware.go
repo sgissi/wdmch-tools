@@ -9,6 +9,34 @@ import (
 	"github.com/sgissi/wdmch-tools/pkg/fwtable"
 )
 
+func firmware(args []string) {
+	switch args[0] {
+	case "new":
+		if len(args) != 6 {
+			fmt.Println("Wrong number of parameters for 'firmware new'")
+			usage()
+		}
+		firmwareNew(args[1:])
+	case "types":
+		fmt.Println("Firmware Types:")
+		for _, t := range fwtable.FwTypes {
+			fmt.Println(" ", t)
+		}
+	case "update":
+		if len(args) != 4 {
+			fmt.Println("Wrong number of parameters for 'firmware update'")
+			usage()
+		}
+		firmwareUpdate(args[1:])
+	case "remove":
+		if len(args) != 3 {
+			fmt.Println("Wrong number of parameters for 'firmware remove'")
+			usage()
+		}
+		firmwareRemove(args[1:])
+	}
+}
+
 func firmwareNew(args []string) {
 	fwtFile := args[0]
 	fwType := args[1]
@@ -99,12 +127,16 @@ func firmwareRemove(args []string) {
 		fmt.Printf("Could not find firmware entry with type '%s'\n", fwType)
 		os.Exit(1)
 	}
-	// Move items after index back one position
-	copy(fw.Fws[idx:], fw.Fws[idx+1:])
-	// Release last item
-	fw.Fws[len(fw.Fws)-1] = nil
-	// Truncate
-	fw.Fws = fw.Fws[:len(fw.Fws)-1]
+	if len(fw.Fws) == 1 {
+		fw.Fws = nil
+	} else {
+		// Move items after index back one position
+		copy(fw.Fws[idx:], fw.Fws[idx+1:])
+		// Release last item
+		fw.Fws[len(fw.Fws)-1] = nil
+		// Truncate
+		fw.Fws = fw.Fws[:len(fw.Fws)-1]
+	}
 	// Save table
 	writeFwTable(fwtFile, fw)
 }

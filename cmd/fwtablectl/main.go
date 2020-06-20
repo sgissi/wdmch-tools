@@ -15,41 +15,15 @@ func usage() {
 	fmt.Println("  firmware update [fwtable-file] [type] [file] ....................... - Update entry with new file")
 	fmt.Println("  firmware remove [fwtable-file] [type] .............................. - Remove firmware from table")
 	fmt.Println("  firmware types  .................................................... - Print available firmware types")
+	fmt.Println("  part remove [fwtable-file] [index] - Remove part by index")
 	fmt.Println("---")
 	fmt.Println("Examples:")
 	fmt.Println("  fwtablectl show /dev/sataa1")
 	fmt.Println("  fwtablectl firmware update fwtable.bin KernelRootFS rootfs.cpio.gz")
 	fmt.Println("  fwtablectl firmware new /dev/sataa1 KernelRootFS rootfs.cpio.gz 67584 0x02200000")
 	fmt.Println("  fwtablectl firmware remove /root/fwtable.bin uBoot")
+	fmt.Println("  fwtablectl part remove /dev/sda1 1")
 	os.Exit(1)
-}
-
-func firmware(args []string) {
-	switch args[0] {
-	case "new":
-		if len(args) != 6 {
-			fmt.Println("Wrong number of parameters for 'firmware new'")
-			usage()
-		}
-		firmwareNew(args[1:])
-	case "types":
-		fmt.Println("Firmware Types:")
-		for _, t := range fwtable.FwTypes {
-			fmt.Println(" ", t)
-		}
-	case "update":
-		if len(args) != 4 {
-			fmt.Println("Wrong number of parameters for 'firmware update'")
-			usage()
-		}
-		firmwareUpdate(args[1:])
-	case "remove":
-		if len(args) != 3 {
-			fmt.Println("Wrong number of parameters for 'firmware remove'")
-			usage()
-		}
-		firmwareRemove(args[1:])
-	}
 }
 
 func main() {
@@ -69,6 +43,11 @@ func main() {
 			usage()
 		}
 		firmware(os.Args[2:])
+	case "part":
+		if len(os.Args) < 3 {
+			usage()
+		}
+		part(os.Args[2:])
 	default:
 		fmt.Println("Invalid command:", os.Args[1])
 		usage()
