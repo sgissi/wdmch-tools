@@ -14,6 +14,9 @@ func part(args []string) {
 			usage()
 		}
 		partRemove(args[1:])
+	default:
+		fmt.Println("Invalid parts command:", args[0])
+		usage()
 	}
 }
 

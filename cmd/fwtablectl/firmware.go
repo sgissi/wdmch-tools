@@ -34,6 +34,10 @@ func firmware(args []string) {
 			usage()
 		}
 		firmwareRemove(args[1:])
+	default:
+		fmt.Println("Invalid firmware command:", args[0])
+		usage()
+
 	}
 }
 
